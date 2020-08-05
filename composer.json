@@ -1,0 +1,31 @@
+{
+    "name": "isakzhanov-r/game-fool",
+    "type": "project",
+    "keywords": [
+        "game",
+        "fool"
+    ],
+    "authors": [
+        {
+            "name": "isakzhanovr",
+            "email": "isakzhanov.r@gmail.com"
+        }
+    ],
+    "license": "MIT",
+    "require": {},
+    "require-dev": {
+        "symfony/var-dumper": "^5.1"
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
