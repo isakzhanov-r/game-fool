@@ -213,6 +213,8 @@ class Game extends Singleton
 
                 return $this->round($this->players->next(), $this->players->next());
             }
+            array_push($values, $card_to->value);
+
             $this->putCard($player_to, $card_to);
 
             $this->motion($player_from, $player_to, $values);
