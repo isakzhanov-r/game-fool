@@ -1,14 +1,13 @@
 <?php
 
-
 namespace App\Support;
-
 
 use App\Contracts\EntityContract;
 use App\Contracts\MutatorContract;
 use App\Contracts\TypedContract;
 use App\Support\Traits\MutatorValues;
 use App\Support\Traits\TypedValue;
+use Exception;
 
 abstract class Entity implements EntityContract, TypedContract, MutatorContract
 {
@@ -47,8 +46,8 @@ abstract class Entity implements EntityContract, TypedContract, MutatorContract
             return;
         }
 
-        if (!$this->isFillable($key)) {
-            throw new \Exception("Property [{$key}] does not exist on this.");
+        if (! $this->isFillable($key)) {
+            throw new Exception("Property [{$key}] does not exist on this.");
         }
 
         if (array_key_exists($key, $this->public)) {
@@ -65,8 +64,8 @@ abstract class Entity implements EntityContract, TypedContract, MutatorContract
 
     public function set($key, $value)
     {
-        if (!$this->isFillable($key)) {
-            throw new \Exception("Property [{$key}] does not exist on this.");
+        if (! $this->isFillable($key)) {
+            throw new Exception("Property [{$key}] does not exist on this.");
         }
 
         if ($this->hasSetMutator($key)) {
@@ -128,7 +127,7 @@ abstract class Entity implements EntityContract, TypedContract, MutatorContract
             if ($this->isFillable($key)) {
                 $this->set($key, $value);
             } else {
-                throw new \Exception(sprintf(
+                throw new Exception(sprintf(
                     'Add [%s] to fillable property to allow mass assignment on [%s].',
                     $key, get_class($this)
                 ));

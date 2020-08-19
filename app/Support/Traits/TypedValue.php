@@ -1,10 +1,9 @@
 <?php
 
-
 namespace App\Support\Traits;
 
-
-use App\Support\ArrayService;
+use Exception;
+use stdClass;
 
 trait TypedValue
 {
@@ -44,15 +43,16 @@ trait TypedValue
 
     public function isObject(?object $value): object
     {
-        return is_null($value) ? new \stdClass() : $value;
+        return is_null($value) ? new stdClass() : $value;
     }
 
-    public function isInstance($key, $value){
-        if ($value instanceof $key){
+    public function isInstance($key, $value)
+    {
+        if ($value instanceof $key) {
             return $value;
         }
 
-        throw new \Exception('Invalid Argument');
+        throw new Exception('Invalid Argument');
     }
 
 }

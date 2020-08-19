@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App;
-
 
 use App\Deck\Card;
 use App\Deck\CardDeck;
@@ -10,12 +8,13 @@ use App\Players\Player;
 use App\Support\Collection;
 use App\Support\PrintView;
 use App\Support\Singleton;
+use Exception;
 
 class Game extends Singleton
 {
-    const MIN_PLAYERS = 2;
-
     const MAX_PLAYERS = 5;
+
+    const MIN_PLAYERS = 2;
 
     /**
      * @var Collection $players
@@ -42,7 +41,7 @@ class Game extends Singleton
         $players = new Collection($players);
 
         if ($players->count() < self::MIN_PLAYERS || $players->count() > self::MAX_PLAYERS) {
-            throw new \Exception("max players in game = " . self::MAX_PLAYERS);
+            throw new Exception("max players in game = " . self::MAX_PLAYERS);
         }
         $this->players = $players;
 
@@ -75,7 +74,7 @@ class Game extends Singleton
         }
         for ($i = 0; $i < 6; $i++) {
             $this->players->each(function (Player $player) {
-                if ($player->cards->count() < 6 && !$this->deck->cards->isEmpty()) {
+                if ($player->cards->count() < 6 && ! $this->deck->cards->isEmpty()) {
                     $card = $this->deck->cards->last();
                     $this->exceptCard($this->deck->cards, $card);
                     $player->cards->push($card);
@@ -95,14 +94,14 @@ class Game extends Singleton
     /**
      * Игрок берет карты из колоды
      *
-     * @param \App\Players\Player $player
+     * @param  \App\Players\Player  $player
      */
     public function handOut(Player $player)
     {
         if ($this->deck->hasCardsInDeck()) {
             $this->deck->pushTrumpToDeck();
         }
-        while ($player->cards->count() < 6 && !$this->deck->cards->isEmpty()):
+        while ($player->cards->count() < 6 && ! $this->deck->cards->isEmpty()):
             $card = $this->deck->cards->last();
             $this->exceptCard($this->deck->cards, $card);
             $player->cards->push($card);
@@ -130,7 +129,7 @@ class Game extends Singleton
         $this->sortCardPlayers();
 
         $players = $this->players->filter(function ($player) {
-            return !$player->cards->where('suit.name', '=', $this->deck->game_trump->suit->name)->isEmpty();
+            return ! $player->cards->where('suit.name', '=', $this->deck->game_trump->suit->name)->isEmpty();
         });
         $player  = $players->sortBy(function ($player) {
             return $player->cards->where('suit.name', '=', $this->deck->game_trump->suit->name)->min('value');
@@ -142,7 +141,6 @@ class Game extends Singleton
         $this->players->except($index);
         $this->players->prepend($player);
 
-
         PrintView::printPlayers($this->players);
 
         return $this;
@@ -151,8 +149,8 @@ class Game extends Singleton
     /**
      * Данный метод вызывает раздачу карт игрокам , обнуляет $motions, в новом раунде новые карты, и проверяет у кого есть карты
      *
-     * @param \App\Players\Player|null $player_from
-     * @param \App\Players\Player|null $player_to
+     * @param  \App\Players\Player|null  $player_from
+     * @param  \App\Players\Player|null  $player_to
      */
     public function round(Player $player_from = null, Player $player_to = null)
     {
@@ -181,13 +179,13 @@ class Game extends Singleton
     /**
      * Данный метод рекурсивный - это событие (ход) двух игроков
      *
-     * @param \App\Players\Player $player_from // Игрок который ходит
-     * @param \App\Players\Player $player_to // Игрок который отбивается
-     * @param array $values // сюда складываются значения карт в игре, что бы подобрать подобные карты для следующего
+     * @param  \App\Players\Player  $player_from // Игрок который ходит
+     * @param  \App\Players\Player  $player_to // Игрок который отбивается
+     * @param  array  $values // сюда складываются значения карт в игре, что бы подобрать подобные карты для следующего
      */
     public function motion(Player $player_from, Player $player_to, &$values = [])
     {
-        if (!$player_to->cards->isEmpty()) {
+        if (! $player_to->cards->isEmpty()) {
             $card_from = $this->cardToEnter($player_from->cards, $values);
 
             if (is_null($card_from)) {
@@ -231,8 +229,8 @@ class Game extends Singleton
     /**
      * Метод убирает из карт игрока - карту которой он ходит
      *
-     * @param \App\Players\Player $player
-     * @param \App\Deck\Card $card
+     * @param  \App\Players\Player  $player
+     * @param  \App\Deck\Card  $card
      */
     private function putCard(Player $player, Card $card)
     {
@@ -250,7 +248,7 @@ class Game extends Singleton
     private function playersHasCards(): Collection
     {
         return $this->players->filter(function (Player $player) {
-            return !$player->cards->isEmpty();
+            return ! $player->cards->isEmpty();
         });
     }
 
@@ -269,8 +267,8 @@ class Game extends Singleton
     /**
      * Метод выбирает карту для хода
      *
-     * @param \App\Support\Collection $cards // Коллекция карт игрока
-     * @param array $values //массив значений карт которые в игре
+     * @param  \App\Support\Collection  $cards // Коллекция карт игрока
+     * @param  array  $values //массив значений карт которые в игре
      *
      * @return \App\Deck\Card|null
      */
@@ -293,9 +291,9 @@ class Game extends Singleton
     /**
      * Метод рекурсивный выбирает карты которое можно подкинуть еще когда отбивающемуся игроку нечем биться
      *
-     * @param \App\Support\Collection $cards
-     * @param array $values
-     * @param \App\Support\Collection $result
+     * @param  \App\Support\Collection  $cards
+     * @param  array  $values
+     * @param  \App\Support\Collection  $result
      *
      * @return \App\Support\Collection
      */
@@ -303,7 +301,7 @@ class Game extends Singleton
     {
         $card = $this->cardToEnter($cards, $values);
 
-        if (!is_null($card) && $result->where('uuid', '=', $card->uuid)->isEmpty()) {
+        if (! is_null($card) && $result->where('uuid', '=', $card->uuid)->isEmpty()) {
             $result->push($card);
             $this->cardsToEnter($cards, $values, $result);
         }
@@ -314,8 +312,8 @@ class Game extends Singleton
     /**
      * Метод выбирает карту которой он может побить карту соперника
      *
-     * @param \App\Support\Collection $cards
-     * @param \App\Deck\Card $card
+     * @param  \App\Support\Collection  $cards
+     * @param  \App\Deck\Card  $card
      *
      * @return \App\Deck\Card|null
      */
@@ -339,7 +337,7 @@ class Game extends Singleton
     /**
      * Все карты раунда переходят игроку
      *
-     * @param \App\Players\Player $player
+     * @param  \App\Players\Player  $player
      */
     private function cardsToPlayer(Player $player): void
     {
@@ -352,8 +350,8 @@ class Game extends Singleton
     /**
      * Минимальная карта из колекции карт игрока, если второй передан то вернется минимальная карта котороя выше переданной вторым параметром
      *
-     * @param \App\Support\Collection $cards
-     * @param \App\Deck\Card|null $card
+     * @param  \App\Support\Collection  $cards
+     * @param  \App\Deck\Card|null  $card
      *
      * @return \App\Deck\Card|null
      */
@@ -378,8 +376,8 @@ class Game extends Singleton
     /**
      * Минимальная козырная карта
      *
-     * @param \App\Support\Collection $cards
-     * @param \App\Deck\Card|null $card
+     * @param  \App\Support\Collection  $cards
+     * @param  \App\Deck\Card|null  $card
      *
      * @return \App\Deck\Card|null
      */
@@ -387,7 +385,7 @@ class Game extends Singleton
     {
         $trump = $cards
             ->where('suit.name', '=', $this->deck->game_trump->suit->name);
-        if (!is_null($card) && $this->deck->game_trump->suit->name === $card->suit->name) {
+        if (! is_null($card) && $this->deck->game_trump->suit->name === $card->suit->name) {
             return $trump
                 ->where('value', '>', $card->value)
                 ->first();
@@ -416,8 +414,8 @@ class Game extends Singleton
     /**
      * Убираем карту из коллекции
      *
-     * @param \App\Support\Collection $cards
-     * @param \App\Deck\Card $card
+     * @param  \App\Support\Collection  $cards
+     * @param  \App\Deck\Card  $card
      */
     private function exceptCard(Collection $cards, Card $card): void
     {

@@ -5,7 +5,6 @@ use App\Players\Player;
 
 require __DIR__ . '/../vendor/autoload.php';
 
-
 $app = Game::getInstance();
 
 $player1 = new Player(['name' => 'Джон Тривольта']);

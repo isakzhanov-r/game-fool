@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Support;
-
 
 use App\Deck\Card;
 use App\Deck\CardDeck;
@@ -22,7 +20,7 @@ final class PrintView
         echo "<p style='color: blue'> $player->name";
         self::printCards($player->cards);
 
-        if (!is_null($player_to)) {
+        if (! is_null($player_to)) {
             echo " vs $player_to->name";
             self::printCards($player_to->cards);
         }

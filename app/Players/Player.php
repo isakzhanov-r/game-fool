@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Players;
-
 
 use App\Support\Collection;
 use App\Support\Entity;
@@ -10,11 +8,12 @@ use App\Support\Entity;
 final class Player extends Entity
 {
     protected $fields = [
-        'name', 'cards',
+        'name',
+        'cards',
     ];
 
     protected $casts = [
-        'name'     => 'string',
-        'cards'    => Collection::class,
+        'name'  => 'string',
+        'cards' => Collection::class,
     ];
 }

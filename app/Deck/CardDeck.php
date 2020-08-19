@@ -1,10 +1,7 @@
 <?php
 
-
 namespace App\Deck;
 
-
-use App\Support\ArrayService;
 use App\Support\Collection;
 use App\Support\Singleton;
 
@@ -95,7 +92,7 @@ class CardDeck extends Singleton
 
     public function hasCardsInDeck(): bool
     {
-        return $this->cards->isEmpty() && !is_null($this->trump);
+        return $this->cards->isEmpty() && ! is_null($this->trump);
     }
 
     public function pushTrumpToDeck()

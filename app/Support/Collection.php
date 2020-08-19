@@ -1,12 +1,10 @@
 <?php
 
-
 namespace App\Support;
 
 use App\Contracts\RepositoryContract;
 use App\Contracts\TypedContract;
 use App\Support\Traits\TypedValue;
-
 
 class Collection implements RepositoryContract, TypedContract
 {
@@ -198,7 +196,7 @@ class Collection implements RepositoryContract, TypedContract
         return $this->map(function ($value) use ($callback) {
             return $callback($value);
         })->filter(function ($value) {
-            return !is_null($value);
+            return ! is_null($value);
         })->reduce(function ($result, $value) {
             return is_null($result) || $value < $result ? $value : $result;
         });
@@ -209,7 +207,7 @@ class Collection implements RepositoryContract, TypedContract
         $callback = $this->retrieverValue($callback);
 
         return $this->filter(function ($value) {
-            return !is_null($value);
+            return ! is_null($value);
         })->reduce(function ($result, $item) use ($callback) {
             $value = $callback($item);
 
@@ -282,7 +280,7 @@ class Collection implements RepositoryContract, TypedContract
         }
         $keys = is_array($key) ? $key : explode('.', $key);
 
-        while (!is_null($segment = array_shift($keys))) {
+        while (! is_null($segment = array_shift($keys))) {
             if (is_array($target) && ArrayService::exists($target, $segment)) {
                 $target = $target[$segment];
             } elseif (is_object($target) && isset($target->public[$segment])) {
