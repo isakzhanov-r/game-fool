@@ -13,6 +13,8 @@ use App\Support\Singleton;
 
 class Game extends Singleton
 {
+    const MIN_PLAYERS = 2;
+
     const MAX_PLAYERS = 5;
 
     /**
@@ -38,7 +40,8 @@ class Game extends Singleton
     public function setPlayers(Player ...$players): self
     {
         $players = new Collection($players);
-        if ($players->count() > self::MAX_PLAYERS) {
+
+        if ($players->count() < self::MIN_PLAYERS || $players->count() > self::MAX_PLAYERS) {
             throw new \Exception("max players in game = " . self::MAX_PLAYERS);
         }
         $this->players = $players;
@@ -62,6 +65,7 @@ class Game extends Singleton
 
     /**
      * Первая раздача карт игрокам по кругу
+     *
      * @return $this
      */
     public function firstHandOut(): self
@@ -90,6 +94,7 @@ class Game extends Singleton
 
     /**
      * Игрок берет карты из колоды
+     *
      * @param \App\Players\Player $player
      */
     public function handOut(Player $player)
@@ -97,7 +102,7 @@ class Game extends Singleton
         if ($this->deck->hasCardsInDeck()) {
             $this->deck->pushTrumpToDeck();
         }
-        while ($player->cards->count() !== 6 && !$this->deck->cards->isEmpty()):
+        while ($player->cards->count() < 6 && !$this->deck->cards->isEmpty()):
             $card = $this->deck->cards->last();
             $this->exceptCard($this->deck->cards, $card);
             $player->cards->push($card);
@@ -117,19 +122,26 @@ class Game extends Singleton
 
     /**
      * Сортировка игроков с определением очередности у кого меньший козырь
+     *
      * @return $this
      */
     public function sortPlayers(): self
     {
         $this->sortCardPlayers();
 
-        $this->players = $this->players->sortBy(function ($player) {
+        $players = $this->players->filter(function ($player) {
+            return !$player->cards->where('suit.name', '=', $this->deck->game_trump->suit->name)->isEmpty();
+        });
+        $player  = $players->sortBy(function ($player) {
             return $player->cards->where('suit.name', '=', $this->deck->game_trump->suit->name)->min('value');
-        })
-            ->values()
-            ->each(function ($player, $key) {
-                $player->position = $key;
-            });
+        })->first();
+
+        $index = $this->players->where('name', $player->name)
+            ->keys()
+            ->toArray();
+        $this->players->except($index);
+        $this->players->prepend($player);
+
 
         PrintView::printPlayers($this->players);
 
@@ -146,17 +158,24 @@ class Game extends Singleton
     {
         $this->motions = new Collection();
 
-        if ($this->playersHasCards()->count() === 1) {
-            $this->whoIsFool();
-            exit('game over');
+        switch ($count = $this->playersHasCards()->count()) {
+            case 0;
+                exit('<p>Ничья</p>');
+
+            case 1;
+                $this->whoIsFool();
+                exit();
+
+            case ($count < $this->players->count()):
+                $this->whoIsWinner();
+                $this->players = $this->playersHasCards()->values();
+                $this->start();
+                break;
+
+            default:
+                PrintView::printPlayer($player_from, $player_to);
+                $this->motion($player_from, $player_to);
         }
-        if ($this->playersHasCards()->count() < $this->players->count()) {
-            $this->whoIsWinner();
-            $this->players = $this->playersHasCards()->values();
-            $this->start();
-        }
-        PrintView::printPlayer($player_from, $player_to);
-        $this->motion($player_from, $player_to);
     }
 
     /**
@@ -211,6 +230,7 @@ class Game extends Singleton
 
     /**
      * Метод убирает из карт игрока - карту которой он ходит
+     *
      * @param \App\Players\Player $player
      * @param \App\Deck\Card $card
      */
@@ -224,6 +244,7 @@ class Game extends Singleton
 
     /**
      * Возвращает коллекцию игроков у которых есть карты
+     *
      * @return \App\Support\Collection
      */
     private function playersHasCards(): Collection
@@ -235,6 +256,7 @@ class Game extends Singleton
 
     /**
      * Возвращает коллекцию игроков у которых нет карт
+     *
      * @return \App\Support\Collection
      */
     private function playersHasNotCards(): Collection
@@ -246,6 +268,7 @@ class Game extends Singleton
 
     /**
      * Метод выбирает карту для хода
+     *
      * @param \App\Support\Collection $cards // Коллекция карт игрока
      * @param array $values //массив значений карт которые в игре
      *
@@ -269,6 +292,7 @@ class Game extends Singleton
 
     /**
      * Метод рекурсивный выбирает карты которое можно подкинуть еще когда отбивающемуся игроку нечем биться
+     *
      * @param \App\Support\Collection $cards
      * @param array $values
      * @param \App\Support\Collection $result
@@ -289,6 +313,7 @@ class Game extends Singleton
 
     /**
      * Метод выбирает карту которой он может побить карту соперника
+     *
      * @param \App\Support\Collection $cards
      * @param \App\Deck\Card $card
      *
@@ -313,6 +338,7 @@ class Game extends Singleton
 
     /**
      * Все карты раунда переходят игроку
+     *
      * @param \App\Players\Player $player
      */
     private function cardsToPlayer(Player $player): void
@@ -325,6 +351,7 @@ class Game extends Singleton
 
     /**
      * Минимальная карта из колекции карт игрока, если второй передан то вернется минимальная карта котороя выше переданной вторым параметром
+     *
      * @param \App\Support\Collection $cards
      * @param \App\Deck\Card|null $card
      *
@@ -350,6 +377,7 @@ class Game extends Singleton
 
     /**
      * Минимальная козырная карта
+     *
      * @param \App\Support\Collection $cards
      * @param \App\Deck\Card|null $card
      *
@@ -387,6 +415,7 @@ class Game extends Singleton
 
     /**
      * Убираем карту из коллекции
+     *
      * @param \App\Support\Collection $cards
      * @param \App\Deck\Card $card
      */
