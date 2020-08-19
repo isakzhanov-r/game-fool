@@ -10,12 +10,11 @@ use App\Support\Entity;
 final class Player extends Entity
 {
     protected $fields = [
-        'name', 'position', 'cards',
+        'name', 'cards',
     ];
 
     protected $casts = [
         'name'     => 'string',
-        'position' => 'int',
         'cards'    => Collection::class,
     ];
 }
