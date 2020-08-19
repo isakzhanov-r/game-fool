@@ -9,6 +9,6 @@ use App\Support\Entity;
 class CardSuit extends Entity
 {
     protected $fields = [
-        'name', 'icon',
+        'name', 'icon', 'color',
     ];
 }
