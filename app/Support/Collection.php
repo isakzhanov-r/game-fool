@@ -99,6 +99,11 @@ class Collection implements RepositoryContract, TypedContract
         return $this->items;
     }
 
+    public function has(string $key)
+    {
+        dd(array_key_exists($key, $this->items));
+    }
+
     public function first(callable $callback = null)
     {
         return ArrayService::first($this->items, $callback);
@@ -107,6 +112,16 @@ class Collection implements RepositoryContract, TypedContract
     public function last(callable $callback = null)
     {
         return ArrayService::last($this->items, $callback);
+    }
+
+    public function next()
+    {
+        if ($next = next($this->items)) {
+            return $next;
+        }
+        reset($this->items);
+
+        return current($this->items);
     }
 
     public function count()
@@ -133,6 +148,13 @@ class Collection implements RepositoryContract, TypedContract
     public function where($key, $operator = null, $value = null)
     {
         return $this->filter($this->operatorForWhere(...func_get_args()));
+    }
+
+    public function whereIn($key, array $values, $strict = false)
+    {
+        return $this->filter(function ($item) use ($key, $values, $strict) {
+            return in_array($this->data_get($item, $key), $values, $strict);
+        });
     }
 
     public function filter(callable $callback = null)
@@ -178,7 +200,7 @@ class Collection implements RepositoryContract, TypedContract
         })->filter(function ($value) {
             return !is_null($value);
         })->reduce(function ($result, $value) {
-            return $value < $result ? $value : $result;
+            return is_null($result) || $value < $result ? $value : $result;
         });
     }
 
@@ -261,7 +283,6 @@ class Collection implements RepositoryContract, TypedContract
         $keys = is_array($key) ? $key : explode('.', $key);
 
         while (!is_null($segment = array_shift($keys))) {
-
             if (is_array($target) && ArrayService::exists($target, $segment)) {
                 $target = $target[$segment];
             } elseif (is_object($target) && isset($target->public[$segment])) {
