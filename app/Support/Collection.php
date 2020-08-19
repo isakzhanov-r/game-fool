@@ -80,6 +80,11 @@ class Collection implements RepositoryContract, TypedContract
         return empty($this->items);
     }
 
+    public function isNotEmpty()
+    {
+        return ! $this->isEmpty();
+    }
+
     public function keys()
     {
         return new static(array_keys($this->items));

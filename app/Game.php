@@ -74,7 +74,7 @@ class Game extends Singleton
         }
         for ($i = 0; $i < 6; $i++) {
             $this->players->each(function (Player $player) {
-                if ($player->cards->count() < 6 && ! $this->deck->cards->isEmpty()) {
+                if ($player->cards->count() < 6 && $this->deck->cards->isNotEmpty()) {
                     $card = $this->deck->cards->last();
                     $this->exceptCard($this->deck->cards, $card);
                     $player->cards->push($card);
@@ -101,7 +101,7 @@ class Game extends Singleton
         if ($this->deck->hasCardsInDeck()) {
             $this->deck->pushTrumpToDeck();
         }
-        while ($player->cards->count() < 6 && ! $this->deck->cards->isEmpty()):
+        while ($player->cards->count() < 6 && $this->deck->cards->isNotEmpty()):
             $card = $this->deck->cards->last();
             $this->exceptCard($this->deck->cards, $card);
             $player->cards->push($card);
@@ -129,7 +129,7 @@ class Game extends Singleton
         $this->sortCardPlayers();
 
         $players = $this->players->filter(function ($player) {
-            return ! $player->cards->where('suit.name', '=', $this->deck->game_trump->suit->name)->isEmpty();
+            return $player->cards->where('suit.name', '=', $this->deck->game_trump->suit->name)->isNotEmpty();
         });
         $player  = $players->sortBy(function ($player) {
             return $player->cards->where('suit.name', '=', $this->deck->game_trump->suit->name)->min('value');
@@ -185,7 +185,7 @@ class Game extends Singleton
      */
     public function motion(Player $player_from, Player $player_to, &$values = [])
     {
-        if (! $player_to->cards->isEmpty()) {
+        if ($player_to->cards->isNotEmpty()) {
             $card_from = $this->cardToEnter($player_from->cards, $values);
 
             if (is_null($card_from)) {
@@ -248,7 +248,7 @@ class Game extends Singleton
     private function playersHasCards(): Collection
     {
         return $this->players->filter(function (Player $player) {
-            return ! $player->cards->isEmpty();
+            return  $player->cards->isNotEmpty();
         });
     }
 
