@@ -3,7 +3,7 @@
 use App\Game;
 use App\Players\Player;
 
-require __DIR__ . '/../vendor/autoload.php';
+require __DIR__.'/../vendor/autoload.php';
 
 $app = Game::getInstance();
 

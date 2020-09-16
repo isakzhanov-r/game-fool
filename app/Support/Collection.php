@@ -42,7 +42,6 @@ class Collection implements RepositoryContract, TypedContract
         }
 
         return $this;
-
     }
 
     public function map(callable $callback)
@@ -82,7 +81,7 @@ class Collection implements RepositoryContract, TypedContract
 
     public function isNotEmpty()
     {
-        return ! $this->isEmpty();
+        return !$this->isEmpty();
     }
 
     public function keys()
@@ -171,7 +170,7 @@ class Collection implements RepositoryContract, TypedContract
 
     public function sortBy($callback, $options = SORT_REGULAR, $descending = false)
     {
-        $results  = [];
+        $results = [];
         $callback = $this->retrieverValue($callback);
 
         foreach ($this->items as $key => $value) {
@@ -186,7 +185,6 @@ class Collection implements RepositoryContract, TypedContract
         }
 
         return new static($results);
-
     }
 
     public function sortByDesc($callback, $options = SORT_REGULAR)
@@ -201,7 +199,7 @@ class Collection implements RepositoryContract, TypedContract
         return $this->map(function ($value) use ($callback) {
             return $callback($value);
         })->filter(function ($value) {
-            return ! is_null($value);
+            return !is_null($value);
         })->reduce(function ($result, $value) {
             return is_null($result) || $value < $result ? $value : $result;
         });
@@ -212,7 +210,7 @@ class Collection implements RepositoryContract, TypedContract
         $callback = $this->retrieverValue($callback);
 
         return $this->filter(function ($value) {
-            return ! is_null($value);
+            return !is_null($value);
         })->reduce(function ($result, $item) use ($callback) {
             $value = $callback($item);
 
@@ -247,7 +245,7 @@ class Collection implements RepositoryContract, TypedContract
 
         return function ($item) use ($key, $operator, $value) {
             $retrieved = $this->data_get($item, $key);
-            $strings   = array_filter([$retrieved, $value], function ($value) {
+            $strings = array_filter([$retrieved, $value], function ($value) {
                 return is_string($value) || (is_object($value) && method_exists($value, '__toString'));
             });
             if (count($strings) < 2 && count(array_filter([$retrieved, $value], 'is_object')) == 1) {
@@ -285,7 +283,7 @@ class Collection implements RepositoryContract, TypedContract
         }
         $keys = is_array($key) ? $key : explode('.', $key);
 
-        while (! is_null($segment = array_shift($keys))) {
+        while (!is_null($segment = array_shift($keys))) {
             if (is_array($target) && ArrayService::exists($target, $segment)) {
                 $target = $target[$segment];
             } elseif (is_object($target) && isset($target->public[$segment])) {

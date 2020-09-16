@@ -43,7 +43,7 @@ class ArrayService
     public static function random(array $array, int $number = null)
     {
         if (count($array) < $number ?? 1) {
-            throw new Exception("You requested " . $number ?? 1 . "items, but there are only " . count($array) . " items available.");
+            throw new Exception('You requested '.$number ?? 1 .'items, but there are only '.count($array).' items available.');
         }
 
         if (is_null($number)) {
@@ -77,5 +77,4 @@ class ArrayService
     {
         return array_key_exists($key, $array);
     }
-
 }

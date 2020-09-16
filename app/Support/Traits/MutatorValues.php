@@ -26,6 +26,6 @@ trait MutatorValues
 
     public function getMutatorName(string $type, string $key): string
     {
-        return $type . ucwords(str_replace(['-', '_'], ' ', $key)) . 'Mutator';
+        return $type.ucwords(str_replace(['-', '_'], ' ', $key)).'Mutator';
     }
 }

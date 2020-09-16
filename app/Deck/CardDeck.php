@@ -92,7 +92,7 @@ class CardDeck extends Singleton
 
     public function hasCardsInDeck(): bool
     {
-        return $this->cards->isEmpty() && ! is_null($this->trump);
+        return $this->cards->isEmpty() && !is_null($this->trump);
     }
 
     public function pushTrumpToDeck()

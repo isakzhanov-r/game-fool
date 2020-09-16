@@ -9,7 +9,7 @@ trait TypedValue
 {
     public function isCallable($value)
     {
-        return ! is_string($value) && is_callable($value);
+        return !is_string($value) && is_callable($value);
     }
 
     public function isInteger(?int $value): int
@@ -54,5 +54,4 @@ trait TypedValue
 
         throw new Exception('Invalid Argument');
     }
-
 }
