@@ -20,7 +20,7 @@ final class PrintView
         echo "<p style='color: blue'> $player->name";
         self::printCards($player->cards);
 
-        if (! is_null($player_to)) {
+        if (!is_null($player_to)) {
             echo " vs $player_to->name";
             self::printCards($player_to->cards);
         }
@@ -29,7 +29,7 @@ final class PrintView
 
     public static function putCard(Player $player, Card $card)
     {
-        echo '<p><i>' . $player->name . '</i> +';
+        echo '<p><i>'.$player->name.'</i> +';
         self::printCard($card);
         echo '</p>';
     }
@@ -41,7 +41,7 @@ final class PrintView
 
     public static function printTake(Player $player)
     {
-        echo '<span> ' . $player->name . ' ---- Взял </span>';
+        echo '<span> '.$player->name.' ---- Взял </span>';
     }
 
     public static function printDeck(CardDeck $deck)
@@ -54,27 +54,27 @@ final class PrintView
     public static function printTrump(CardDeck $deck)
     {
         echo '<p style="color: red"> Trump = ';
-        echo $deck->trump->name . '-' . $deck->trump->suit->icon;
+        echo $deck->trump->name.'-'.$deck->trump->suit->icon;
         echo '</p>';
     }
 
     public static function printCards(Collection $cards)
     {
-        echo "(";
+        echo '(';
         $cards->each(function (Card $card) {
             self::printCard($card);
         });
-        echo ")";
+        echo ')';
     }
 
     public static function printCard(Card $card)
     {
-        echo $card->name . '<span style="color:' . $card->suit->color . '">' . $card->suit->icon . '</span>; ';
+        echo $card->name.'<span style="color:'.$card->suit->color.'">'.$card->suit->icon.'</span>; ';
     }
 
     public static function motionCard($player, $card)
     {
-        echo $player->name . '->';
+        echo $player->name.'->';
         self::printCard($card);
     }
 }

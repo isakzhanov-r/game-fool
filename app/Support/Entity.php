@@ -11,7 +11,8 @@ use Exception;
 
 abstract class Entity implements EntityContract, TypedContract, MutatorContract
 {
-    use TypedValue, MutatorValues;
+    use TypedValue;
+    use MutatorValues;
 
     public $public = [];
 
@@ -46,12 +47,11 @@ abstract class Entity implements EntityContract, TypedContract, MutatorContract
             return;
         }
 
-        if (! $this->isFillable($key)) {
+        if (!$this->isFillable($key)) {
             throw new Exception("Property [{$key}] does not exist on this.");
         }
 
         if (array_key_exists($key, $this->public)) {
-
             $value = $this->public[$key];
 
             if ($this->hasGetMutator($key)) {
@@ -64,7 +64,7 @@ abstract class Entity implements EntityContract, TypedContract, MutatorContract
 
     public function set($key, $value)
     {
-        if (! $this->isFillable($key)) {
+        if (!$this->isFillable($key)) {
             throw new Exception("Property [{$key}] does not exist on this.");
         }
 
@@ -129,7 +129,8 @@ abstract class Entity implements EntityContract, TypedContract, MutatorContract
             } else {
                 throw new Exception(sprintf(
                     'Add [%s] to fillable property to allow mass assignment on [%s].',
-                    $key, get_class($this)
+                    $key,
+                    get_class($this)
                 ));
             }
         }
